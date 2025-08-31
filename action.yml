@@ -1,0 +1,52 @@
+name: bob-action
+description: "A GitHub Action to bootstrap the Bob the Builder buildsystem."
+author: "Aymeric Wibo"
+
+inputs:
+  version:
+    description: "The version of Bob to install."
+    required: false
+    default: "latest"
+
+outputs:
+  bob-version:
+    description: "The version of Bob that was installed. Useful when input version is `latest`."
+    value: ${{ steps.version.outputs.version }}
+
+runs:
+  using: "composite"
+  steps:
+    - name: Determine version
+      id: version
+      shell: bash
+      run: |
+        if [ "${{ inputs.version }}" = "latest" ]; then
+          LATEST=$(git ls-remote --tags https://github.com/inobulles/bob.git \
+            | grep -o 'refs/tags/v[0-9]*\.[0-9]*\.[0-9]*' \
+            | sed 's#refs/tags/##' \
+            | sort -V \
+            | tail -n1)
+          echo "version=$LATEST" >> $GITHUB_OUTPUT
+        else
+          echo "version=${{ inputs.version }}" >> $GITHUB_OUTPUT
+        fi
+
+    - name: Clone Bob
+      shell: bash
+      run: git clone https://github.com/inobulles/bob --depth 1 --branch ${{ steps.version.outputs.version }}
+
+    - name: Bootstrap Bob
+      shell: bash
+      run: |
+        cd bob
+        sh bootstrap.sh
+
+    - name: Install Bob
+      shell: bash
+      run: |
+        cd bob
+        sudo .bootstrap/bob install
+
+branding:
+  icon: "package"
+  color: "yellow"
