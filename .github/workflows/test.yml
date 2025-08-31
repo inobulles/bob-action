@@ -1,0 +1,32 @@
+name: Test Bob Action
+
+on: [push, workflow_dispatch]
+
+jobs:
+  test-latest:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Bootstrap Bob (version=latest)
+        uses: ./
+        with:
+          version: latest
+
+      - name: Verify installed version
+        run: echo "Installed Bob version is ${{ steps.bob.outputs.bob-version }}."
+
+  test-specific:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Bootstrap Bob (version=v0.2.18)
+        uses: ./
+        with:
+          version: v0.2.18
+
+      - name: Verify installed version
+        run: |
+          echo "Installed Bob version is ${{ steps.bob.outputs.bob-version }}."
+          test "${{ steps.bob.outputs.bob-version }}" = "v0.2.18"
