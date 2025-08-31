@@ -24,12 +24,12 @@ jobs:
     steps:
       - uses: actions/checkout@v5
 
-      - name: Bootstrap Bob (version=v0.2.18)
+      - name: Bootstrap Bob (version=v0.2.19)
         uses: ./
         with:
-          version: v0.2.18
+          version: v0.2.19
 
       - name: Verify installed version
         run: |
           echo "Installed Bob version is ${{ steps.bob.outputs.bob-version }}."
-          test "${{ steps.bob.outputs.bob-version }}" = "v0.2.18"
+          test "${{ steps.bob.outputs.bob-version }}" = "v0.2.19"

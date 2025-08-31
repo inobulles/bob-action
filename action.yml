@@ -39,7 +39,7 @@ runs:
       shell: bash
       run: |
         cd bob
-        ASAN_OPTIONS=detect_leaks=0 sh bootstrap.sh
+        sh bootstrap.sh
 
     - name: Install Bob
       shell: bash
